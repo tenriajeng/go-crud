@@ -1,0 +1,6 @@
+gin https://gin-gonic.com/
+gorm https://gorm.io/docs/index.html
+godotenv https://github.com/joho/godotenv
+CompileDaemon not running https://github.com/githubnemo/CompileDaemon
+bcrypt golang.org/x/crypto/bcrypt
+jwt github.com/golang-jwt/jwt/v4
