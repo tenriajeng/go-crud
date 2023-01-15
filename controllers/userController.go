@@ -22,6 +22,7 @@ func SingUp(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"error": "Failed read body",
 		})
+		return
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(body.Password), 10)
@@ -30,6 +31,7 @@ func SingUp(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"error": "Failed hash password",
 		})
+		return
 	}
 
 	user := models.User{Email: body.Email, Password: string(hash)}
@@ -38,11 +40,14 @@ func SingUp(context *gin.Context) {
 
 	if result.Error != nil {
 		context.JSON(http.StatusBadRequest, gin.H{
-			"error": "Failed hash password",
+			"error": "User already exists",
 		})
+		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{})
+	context.JSON(http.StatusOK, gin.H{
+		"data": user,
+	})
 }
 
 func Login(context *gin.Context) {
@@ -55,6 +60,7 @@ func Login(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"error": "Failed read body",
 		})
+		return
 	}
 
 	var user models.User
@@ -64,6 +70,7 @@ func Login(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid email or password",
 		})
+		return
 	}
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password))
@@ -72,6 +79,7 @@ func Login(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid email or password",
 		})
+		return
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
@@ -86,12 +94,15 @@ func Login(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"error": "Failed to create token",
 		})
+		return
 	}
 
 	context.SetSameSite(http.SameSiteLaxMode)
 	context.SetCookie("Authorization", tokenString, 3600*24*30, "", "", false, true)
 
-	context.JSON(http.StatusOK, gin.H{})
+	context.JSON(http.StatusOK, gin.H{
+		"message": user,
+	})
 }
 
 func Validate(context *gin.Context) {
