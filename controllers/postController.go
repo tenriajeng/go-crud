@@ -3,6 +3,7 @@ package controllers
 import (
 	"go-crud/initializers"
 	"go-crud/models"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,9 +12,8 @@ func PostIndex(context *gin.Context) {
 	var posts []models.Post
 	initializers.DB.Find(&posts)
 
-	context.JSON(200, gin.H{
-		"message": "pong",
-		"data":    posts,
+	context.JSON(http.StatusOK, gin.H{
+		"data": posts,
 	})
 }
 
@@ -31,12 +31,10 @@ func PostCreate(context *gin.Context) {
 
 	if result.Error != nil {
 		context.Status(400)
-		return
 	}
 
-	context.JSON(200, gin.H{
-		"message": "pong",
-		"data":    post,
+	context.JSON(http.StatusOK, gin.H{
+		"data": post,
 	})
 }
 
@@ -45,9 +43,8 @@ func PostShow(context *gin.Context) {
 	var post models.Post
 	initializers.DB.First(&post, id)
 
-	context.JSON(200, gin.H{
-		"message": "pong",
-		"data":    post,
+	context.JSON(http.StatusOK, gin.H{
+		"data": post,
 	})
 }
 
@@ -69,9 +66,8 @@ func PostUpdate(context *gin.Context) {
 		Body:  body.Body,
 	})
 
-	context.JSON(200, gin.H{
-		"message": "pong",
-		"data":    post,
+	context.JSON(http.StatusOK, gin.H{
+		"data": post,
 	})
 }
 
@@ -79,8 +75,7 @@ func PostDelete(context *gin.Context) {
 	id := context.Param("id")
 	initializers.DB.Delete(&models.Post{}, id)
 
-	context.JSON(200, gin.H{
-		"message": "pong",
-		"data":    "success delete",
+	context.JSON(http.StatusOK, gin.H{
+		"data": "success delete",
 	})
 }
